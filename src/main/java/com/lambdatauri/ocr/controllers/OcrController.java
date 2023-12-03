@@ -7,9 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ import java.io.*;
 public class OcrController {
 
 
-    private final Logger LOG = LogManager.getLogger(OcrController.class);
+    private final Logger LOG = LoggerFactory.getLogger(OcrController.class);
 
     private final Tesseract tesseract;
 
@@ -46,14 +45,14 @@ public class OcrController {
             tesseract.setOcrEngineMode(OcrMode.OEM_TESSERACT_LSTM_COMBINED.ordinal());
             multipartFile.transferTo(file);
             if (!file.exists()){
-                LOG.log(Level.ERROR,file.getAbsolutePath()+"File not found");
+                LOG.info(file.getAbsolutePath()+"File not found");
                 return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
             }
             String result = tesseract.doOCR(file);
-            LOG.log(Level.INFO,"Ocr's been here");
+            LOG.info("Ocr's been here");
             return new ResponseEntity<>(PdfDto.builder().fileName(multipartFile.getOriginalFilename()).text(result).build(),HttpStatus.OK);
         } catch (TesseractException e) {
-            LOG.log(Level.ERROR,"Error in ocr :"+e.getMessage());
+            LOG.error("Error in ocr :"+e.getMessage());
         }
 
         return new ResponseEntity<>("Error",HttpStatus.NOT_FOUND);

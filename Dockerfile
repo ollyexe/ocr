@@ -1,14 +1,11 @@
 #### Stage 1: Build the application
-FROM bellsoft/liberica-openjdk-alpine-musl:17 as build
+FROM bellsoft/liberica-openjdk-alpine-musl:21 as build
 
 RUN apk update
 
 # Install tesseract library
 RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-deu tesseract-ocr-data-ita tesseract-ocr-data-eng tesseract-ocr-data-ara
 ENV LD_LIBRARY_PATH=/tesseract/lib
-RUN apk --update add fontconfig msttcorefonts-installer ghostscript-fonts  && \
-update-ms-fonts && \
-fc-cache -f -v
 # Download last language package
 RUN mkdir -p /tessdata
 ADD https://raw.githubusercontent.com/tesseract-ocr/tessdata/main/eng.traineddata /tessdata/eng.traineddata
