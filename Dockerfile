@@ -1,16 +1,25 @@
-#### Stage 1: Build the application
-FROM bellsoft/liberica-openjdk-alpine-musl:21 as build
+FROM bellsoft/liberica-openjdk-alpine:21 as builder
 
-RUN apk update
+RUN apk add --no-cache bash procps curl tar
 
+# common for all images
+ENV MAVEN_HOME /usr/share/maven
 
-# Set the name of the jar
-ENV APP_FILE *.jar
+COPY --from=maven:3.9.5-eclipse-temurin-11 ${MAVEN_HOME} ${MAVEN_HOME}
+COPY --from=maven:3.9.5-eclipse-temurin-11 /usr/local/bin/mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
+COPY --from=maven:3.9.5-eclipse-temurin-11 /usr/share/maven/ref/settings-docker.xml /usr/share/maven/ref/settings-docker.xml
 
+RUN ln -s ${MAVEN_HOME}/bin/mvn /usr/bin/mvn
 
-# Copy our JAR
-COPY target/$APP_FILE /app.jar
+ARG MAVEN_VERSION=3.9.5
+ARG USER_HOME_DIR="/root"
+ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
-# Launch the Spring Boot application
-ENV JAVA_OPTS=""
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
+COPY src ./src
+COPY pom.xml .
+RUN mvn clean install
+
+COPY ./target/ocr-0.0.1-SNAPSHOT.jar /usr/local/lib/app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar"]
