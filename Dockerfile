@@ -11,6 +11,6 @@ RUN ./mvnw dependency:resolve
 
 COPY src ./src
 
-CMD ["./mvnw", "spring-boot:run"]
+CMD ["./maven-wrapper", "spring-boot:run"]
 
 # Set the name of the jar
