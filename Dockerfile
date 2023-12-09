@@ -3,8 +3,6 @@ FROM bellsoft/liberica-openjdk-alpine-musl:21 as build
 
 RUN apk update
 
-RUN tesseract --list-langs
-RUN tesseract -v
 
 # Set the name of the jar
 ENV APP_FILE *.jar
