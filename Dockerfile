@@ -20,6 +20,6 @@ COPY src ./src
 COPY pom.xml .
 RUN mvn clean install
 
-COPY ./target/ocr-0.0.1-SNAPSHOT.jar /usr/local/lib/app.jar
+COPY ./root/.m2/repository/com/lambdatauri/ocr/0.0.1-SNAPSHOT/ocr-0.0.1-SNAPSHOT.jar /usr/local/lib/app.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar"]
