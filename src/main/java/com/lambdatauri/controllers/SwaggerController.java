@@ -21,7 +21,7 @@ public class SwaggerController {
 
         @RequestMapping(value = "/apidoc", method = RequestMethod.GET)
         public String index(HttpServletRequest request) {
-            return "redirect:/swagger-ui.html";
+             return "redirect:/swagger-ui.html";
         }
 
     }
